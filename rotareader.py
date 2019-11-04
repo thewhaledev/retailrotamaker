@@ -65,13 +65,13 @@ def employee_dict_maker(day_list):
             employees[sheet[name_cells[i]].value] = sheet[day_list[i]].value
     return employees
 
-def full_time_list(dict):
+def all_employees(dict):
     #This function makes a seperate list of the names of those on full time hours.
-    full_timers = []
+    all_employees = []
     for key in dict.keys():
         if dict[key] != 1130 or dict[key] != 1140:
-            full_timers.append(key)
-    return full_timers
+            all_employees.append(key)
+    return all_employees
 
 def part_time_list(dict):
     #This function makes a seperate list of the names of those on part time hours.
@@ -91,13 +91,13 @@ fri_employees = employee_dict_maker(fri_cells)
 sat_employees = employee_dict_maker(sat_cells)
 sun_employees = employee_dict_maker(sun_cells)
 
-mon_full_time = full_time_list(mon_employees)
-tue_full_time = full_time_list(tue_employees)
-wed_full_time = full_time_list(wed_employees)
-thu_full_time = full_time_list(thu_employees)
-fri_full_time = full_time_list(fri_employees)
-sat_full_time = full_time_list(sat_employees)
-sun_full_time = full_time_list(sun_employees)
+mon_full_time = all_employees(mon_employees)
+tue_full_time = all_employees(tue_employees)
+wed_full_time = all_employees(wed_employees)
+thu_full_time = all_employees(thu_employees)
+fri_full_time = all_employees(fri_employees)
+sat_full_time = all_employees(sat_employees)
+sun_full_time = all_employees(sun_employees)
 
 mon_part_time  = part_time_list(mon_employees)
 tue_part_time = part_time_list(tue_employees)
@@ -129,7 +129,7 @@ important_employees = ["Corrina Simpson", "Ignacy Jarvis", "Zeeshan Mccullough",
 "Elif Patrick", "Gracie-Mai Murphy", "Kristen Pratt", "Reggie Fletcher",
 "Alexandria Lawson",]
 
-def position_filler(full_time_list, part_time_list):
+def position_filler(employee_list, part_time_list):
     """
     This function makes a tuple holding each position and the name of the employee who will fill that position.
     It checks agaisnt three conditions, presented in this order:
@@ -139,11 +139,11 @@ def position_filler(full_time_list, part_time_list):
     """
     while True:
         random.shuffle(full_time_list) # The full time list is shuffled continously until all the proceeding conditions are met.
-        if full_time_list[3] == "Alexandria Lawson" or full_time_list[5] == "Alexandria Lawson" or full_time_list[6] == "Alexandria Lawson" or full_time_list[8] == "Alexandria Lawson":
+        if employee_list[3] == "Alexandria Lawson" or employee_list[5] == "Alexandria Lawson" or employee_list[6] == "Alexandria Lawson" or employee_list[8] == "Alexandria Lawson":
             continue
-        if full_time_list[3] in part_time_list or full_time_list[4] in part_time_list or full_time_list[5] in part_time_list or full_time_list[6] in part_time_list:
+        if employee_list[3] in part_time_list or employee_list[4] in part_time_list or employee_list[5] in part_time_list or employee_list[6] in part_time_list:
             continue
-        if full_time_list[0] in important_employees or full_time_list[1] in important_employees or full_time_list[2] in important_employees:
+        if employee_list[0] in important_employees or employee_list[1] in important_employees or employee_list[2] in important_employees:
             break
     day_merge = tuple(zip(positions, full_time_list))
     return day_merge
