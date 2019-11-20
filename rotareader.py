@@ -7,51 +7,43 @@ workbook = load_workbook(filename="rota.xlsx")
 sheet = workbook.active
 
 """
-!Important! These cells dictate where the program will look when
-deciding who is in for a particular day. If a person is removed from
-the rota, or another position is added, the corresponding cells must
-also be added to these lists.
+!Important! This list show the full range of cells in column A, from the
+first full-timer to the final retail employee. If more staff are added,
+or if the range changes, these cells will also need to be added to the list.
 """
 
-name_cells = ["A22", "A23", "A24", "A25", "A26", "A27", "A29", "A30",
-"A31", "A32", "A33", "A34", "A35", "A36", "A38", "A39", "A40", "A41",
-"A42", "A43", "A45", "A46", "A47", "A48", "A51", "A52", "A53", "A54",
-"A55", "A56", "A57", "A58", "A59", "A60"]
+rota_cells = ["A22", "A23", "A24", "A25", "A26", "A27", "A28", "A29", "A30",
+"A31", "A32", "A33", "A34", "A35", "A36", "A37", "A38", "A39", "A40", "A41",
+"A42", "A43", "A44", "A45", "A46", "A47", "A48", "A49", "A50", "A51", "A52", "A53", "A54",
+"A55", "A56", "A57", "A58", "A59", "A60", "A61"]
 
-mon_cells = ["B22", "B23", "B24", "B25", "B26", "B27", "B29", "B30",
-"B31", "B32", "B33", "B34", "B35", "B36", "B38", "B39", "B40", "B41",
-"B42", "B43", "B45", "B46", "B47", "B48", "B51", "B52", "B53", "B54",
-"B55", "B56", "B57", "B58", "B59", "B60"]
+ignore = ['VACANCY', 'Full-time Staff', 'Part-time Staff', 'Weekend Staff', 'Fixed Term Staff', 'Casual Staff']
 
-tue_cells = ["F22", "F23", "F24", "F25", "F26", "F27", "F29", "F30",
-"F31", "F32", "F33", "F34", "F35", "F36", "F38", "F39", "F40", "F41",
-"F42", "F43", "F45", "F46", "F47", "F48", "F51", "F52", "F53", "F54",
-"F55", "F56", "F57", "F58", "F59", "F60"]
+cell_values = []
+name_cells = []
 
-wed_cells = ["J22", "J23", "J24", "J25", "J26", "J27", "J29", "J30",
-"J31", "J32", "J33", "J34", "J35", "J36", "J38", "J39", "J40", "J41",
-"J42", "J43", "J45", "J46", "J47", "J48", "J51", "J52", "J53", "J54",
-"J55", "J56", "J57", "J58", "J59", "J60"]
+for item in rota_cells:
+    value = sheet[item].value.rstrip()
+    cell_values.append(value)
+    if value not in ignore:
+        name_cells.append(item)
 
-thu_cells = ["N22", "N23", "N24", "N25", "N26", "N27", "N29", "N30",
-"N31", "N32", "N33", "N34", "N35", "N36", "N38", "N39", "N40", "N41",
-"N42", "N43", "N45", "N46", "N47", "N48", "N51", "N52", "N53", "N54",
-"N55", "N56", "N57", "N58", "N59", "N60"]
+def day_cell_maker(column):
+    name_cells = []
+    for i in range(len(rota_cells)):
+        number = rota_cells[i].strip("A")
+        name = cell_values[i]
+        if name not in ignore:
+            name_cells.append(column + number)
+    return name_cells
 
-fri_cells = ["R22", "R23", "R24", "R25", "R26", "R27", "R29", "R30",
-"R31", "R32", "R33", "R34", "R35", "R36", "R38", "R39", "R40", "R41",
-"R42", "R43", "R45", "R46", "R47", "R48", "R51", "R52", "R53", "R54",
-"R55", "R56", "R57", "R58", "R59", "R60"]
-
-sat_cells = ["V22", "V23", "V24", "V25", "V26", "V27", "V29", "V30",
-"V31", "V32", "V33", "V34", "V35", "V36", "V38", "V39", "V40", "V41",
-"V42", "V43", "V45", "V46", "V47", "V48", "V51", "V52", "V53", "V54",
-"V55", "V56", "V57", "V58", "V59", "V60"]
-
-sun_cells = ["Z22", "Z23", "Z24", "Z25", "Z26", "Z27", "Z29", "Z30",
-"Z31", "Z32", "Z33", "Z34", "Z35", "Z36", "Z38", "Z39", "Z40", "Z41",
-"Z42", "Z43", "Z45", "Z46", "Z47", "Z48", "Z51", "Z52", "Z53", "Z54",
-"Z55", "Z56", "Z57", "Z58", "Z59", "Z60"]
+mon_cells = day_cell_maker("B")
+tue_cells = day_cell_maker("F")
+wed_cells = day_cell_maker("J")
+thu_cells = day_cell_maker("N")
+fri_cells = day_cell_maker("R")
+sat_cells = day_cell_maker("V")
+sun_cells = day_cell_maker("Z")
 
 def employee_dict_maker(day_list):
     """
@@ -66,10 +58,9 @@ def employee_dict_maker(day_list):
     return employees
 
 def all_employees(dict):
-    #This function makes a seperate list of the names of those on full time hours.
+    #This function makes a seperate list of the names of all employees
     all_employees = []
     for key in dict.keys():
-        if dict[key] != 1130 or dict[key] != 1140:
             all_employees.append(key)
     return all_employees
 
@@ -118,16 +109,17 @@ staff are doing lunch covers.
 """
 
 positions = ["M/S, 12PM", "M/S, 1PM", "M/S 2PM", "WL-Ww", "MEZ", "COVER WL-MEZ",
- "WW-WL", "TS", "COVER WW-TS", "M/S, 12PM", "M/S, 1PM", "M/S 2PM"]
+ "WW-WL", "TS", "COVER WW-TS", "M/S, 12PM", "M/S, 1PM", "M/S 2PM", "M/S Extra",
+  "M/S Extra", "M/S Extra", "M/S Extra",]
 
 """
 !Important! This list holds the employees who have till "privaleges". This
 will have to be changed when such employees change.
 """
 
-important_employees = ["Corrina Simpson", "Ignacy Jarvis", "Zeeshan Mccullough",
-"Elif Patrick", "Gracie-Mai Murphy", "Kristen Pratt", "Reggie Fletcher",
-"Alexandria Lawson",]
+important_employees = ["Sylwia Wroblewska", "Gina Lovatt", "Michael Heath",
+"Michael Pearson", "Lincoln Keyi", "Richard Grange", "Tinashe Zvobgo",
+"Sinuo Guo",]
 
 def position_filler(employee_list, part_time_list):
     """
@@ -138,14 +130,14 @@ def position_filler(employee_list, part_time_list):
     3) That there are also employees with "till privaleges" in the main location, where such privalges (refunds etc...) are needed.
     """
     while True:
-        random.shuffle(full_time_list) # The full time list is shuffled continously until all the proceeding conditions are met.
-        if employee_list[3] == "Alexandria Lawson" or employee_list[5] == "Alexandria Lawson" or employee_list[6] == "Alexandria Lawson" or employee_list[8] == "Alexandria Lawson":
+        random.shuffle(employee_list) # The full time list is shuffled continously until all the proceeding conditions are met.
+        if employee_list[3] == "Micheal Heath" or employee_list[5] == "Micheal Heath" or employee_list[6] == "Micheal Heath" or employee_list[8] == "Micheal Heath":
             continue
         if employee_list[3] in part_time_list or employee_list[4] in part_time_list or employee_list[5] in part_time_list or employee_list[6] in part_time_list:
             continue
         if employee_list[0] in important_employees or employee_list[1] in important_employees or employee_list[2] in important_employees:
             break
-    day_merge = tuple(zip(positions, full_time_list))
+    day_merge = tuple(zip(positions, employee_list))
     return day_merge
 
 #The function is called here for each day.
@@ -176,7 +168,7 @@ new_workbook = load_workbook(filename="daily_rotas.xlsx")
 
 #These cells dictate where the names should be written on the template.
 position_cells = ["B8", "B10", "B12", "B17", "B18", "B19", "B21",
- "B22", "B23", "B9", "B11", "B13", "B14", "B15"]
+ "B22", "B23", "B9", "B11", "B13", "B14", "B15", "B16", "B17",]
 
 def daily_rota_maker(sheetname, position_tuple):
     """
@@ -211,5 +203,8 @@ daily_rota_maker("Thu", thursday)
 daily_rota_maker("Fri", friday)
 daily_rota_maker("Sat", saturday)
 daily_rota_maker("Sun", sunday)
+
+print(mon_full_time)
+print(mon_part_time)
 
 input("Press ENTER to exit")
